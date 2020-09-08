@@ -1,6 +1,7 @@
 // import redux from 'redux';
 const redux = require('redux');
 const createStore = redux.createStore;
+const combineReducers = redux.combineReducers;
 
 //Actions
 
@@ -27,13 +28,6 @@ function buyIceCream(){
 
 //Reducer
 //(previousstate, action) => newState
-
-//Deprecated state
-// const initialState = {
-//     numOfCakes: 10,
-//     numOfIceCreams: 20
-// }
-
 const intialCakeState = {
     numOfCakes: 10
 }
@@ -42,22 +36,7 @@ const intialIceCreamState = {
     numOfIceCreams: 20
 }
 
-//Deprecated reducer
-// const reducer = (state = initialState, action) => {
-//     switch(action.type){
-//         case BUY_CAKE: return {
-//             ...state,
-//             numOfCakes: state.numOfCakes - 1
-//         }
 
-//         case BUY_ICECREAM: return {
-//             ...state,
-//             numOfIceCreams: state.numOfIceCreams - 1
-//         }
-
-//         default: return state
-//     }
-// }
 
 const iceCreamReducer = (state = intialIceCreamState, action) => {
     switch(action.type){
@@ -80,8 +59,11 @@ const cakeReducer = (state = intialCakeState, action) => {
     }
 }
 
-
-
+//Combining reducers
+const rootReducer = combineReducers({
+    cake: cakeReducer,
+    iceCream: iceCreamReducer
+});
 /*  createStore takes in the reducer function as a param.
         the reducer function has the initial state of the application.
             this is required for the store to make the state transitions
@@ -89,7 +71,7 @@ const cakeReducer = (state = intialCakeState, action) => {
     
 */
 
-const store = createStore(reducer);
+const store = createStore(rootReducer);
 //getState allows us access to the store
 console.log('Initial state', store.getState());
 
@@ -123,7 +105,35 @@ unsubscribe();
 
         Note) Action creators are better than simply actions in our
             dispatch
-    */  
+    */
+   /*Accessing values:
+        state.cake.numOfCakes
+        state.iceCream.numOfIceCreams
+    */
+//Deprecated state
+// const initialState = {
+//     numOfCakes: 10,
+//     numOfIceCreams: 20
+// }
+
+//Deprecated reducer
+// const reducer = (state = initialState, action) => {
+//     switch(action.type){
+//         case BUY_CAKE: return {
+//             ...state,
+//             numOfCakes: state.numOfCakes - 1
+//         }
+
+//         case BUY_ICECREAM: return {
+//             ...state,
+//             numOfIceCreams: state.numOfIceCreams - 1
+//         }
+
+//         default: return state
+//     }
+// }
+
+
 // switch(action.type){
 //     case 'INCREMENT':
 //         return state + action.payload;
