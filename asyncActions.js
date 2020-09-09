@@ -2,6 +2,11 @@
 const redux = require('redux');
 const createStore = redux.createStore;
 
+const applyMiddleware = redux.applyMiddleware;
+const thunkMiddleware = require('redux-thunk').default;
+
+const axios = require('axios');
+
 //Define the state
 const intialState = {
     loading: false,
@@ -19,7 +24,7 @@ const FETCH_USERS_FAILURE= 'FETCH_USERS_FAILURE';
 //Create the Action Creators
 const fetchUsersRequest = () => {
     return {
-        type: FETCH_REQUEST
+        type: FETCH_USERS_REQUEST
     }
 }
 
@@ -61,4 +66,34 @@ const reducer = (state = intialState, action) => {
     }
 }
 
-const store = createStore(reducer);
+/* The thunk middleware will allow the ability for an action
+    creator to return a function
+*/
+const fetchUsers = () => {
+    return function(dispatch){
+        dispatch(fetchUsersRequest());
+        axios.get('https://jsonplaceholder.typicode.com/users')
+            .then(response => {
+                //response.data is the array of users
+                const users = response.data.map(user => user.id)
+                dispatch(fetchUsersSuccess(users))
+            })
+            .catch(error => {
+                //error.message gives discription of error
+                dispatch(fetchUsersFailure(error.message))
+            })
+    }
+}
+
+const store = createStore(reducer, applyMiddleware(thunkMiddleware));
+store.subscribe(() => {console.log(store.getState())});
+store.dispatch(fetchUsers());
+
+/*  Recap: async actions
+    Import redux thunk middleware
+        pass it to the createStore function.
+            which will allow an action creator to return a function, rather 
+            than an action. The function can now handle asynchronous tasks.
+            and also dispatch regular actions which will be handled by the 
+            reducer
+*/
