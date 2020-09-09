@@ -1,7 +1,10 @@
 // import redux from 'redux';
 const redux = require('redux');
+const reduxLogger = require('redux-logger');
 const createStore = redux.createStore;
 const combineReducers = redux.combineReducers;
+const applyMiddleware = redux.applyMiddleware;
+const logger = reduxLogger.createLogger();
 
 //Actions
 
@@ -71,12 +74,17 @@ const rootReducer = combineReducers({
     
 */
 
-const store = createStore(rootReducer);
+//Adding 
+const store = createStore(rootReducer, applyMiddleware(logger));
 //getState allows us access to the store
 console.log('Initial state', store.getState());
 
 //allow the app to subscribe to changes in the store using subscribe
-const unsubscribe = store.subscribe(() => console.log('Updated state', store.getState()));
+// const unsubscribe = store.subscribe(() => console.log('Updated state', store.getState()));
+
+//removed console.log statement above, now that we have the applyMiddleware(logger)
+const unsubscribe = store.subscribe(() => {});
+
 
 //The store provides a dispatch method to update the state
     //dispatch method takes in an action as its param
